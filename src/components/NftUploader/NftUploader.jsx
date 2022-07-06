@@ -19,7 +19,7 @@ const NftUploader = () => {
 
   console.log("currentAccount: ", currentAccount);
 
-  const checkIfWalletIsConnected = async () => {
+  const requestConnectToRinkeby = async () => {
     const { ethereum } = window;
     if (!ethereum) {
       console.log("Make sure you have MetaMask!");
@@ -29,7 +29,7 @@ const NftUploader = () => {
       let chainId = await ethereum.request({ method: "eth_chainId" });
       console.log("Connected to chain " + chainId);
       // 0x4 は　Rinkeby の ID です。
-      const rinkebyChainId = "0x4";
+        const rinkebyChainId = "0x4";
       if (chainId !== rinkebyChainId) {
         try {
           await window.ethereum.request({
@@ -54,6 +54,23 @@ const NftUploader = () => {
           }
         }
       }
+    }
+  }
+
+  const checkIfWalletIsConnected = async () => {
+    const { ethereum } = window;
+    if (!ethereum) {
+      console.log("Make sure you have MetaMask!");
+      return;
+    } else {
+      console.log("We have the ethereum object", ethereum);
+      let chainId = await ethereum.request({ method: "eth_chainId" });
+      console.log("Connected to chain " + chainId);
+      // 0x4 は　Rinkeby の ID です。
+      const rinkebyChainId = "0x4";
+      if (chainId !== rinkebyChainId) {
+        console.log("Change network to Rinkeby!!");
+      } else {}
 
     }
 
@@ -143,6 +160,14 @@ const NftUploader = () => {
       </button>
   );
 
+  const changeNetworkContainer = () => (
+
+    <button onClick={requestConnectToRinkeby} className="cta-button connect-wallet-button">
+      Change Network
+    </button>
+);
+
+
   /*
    * ページがロードされたときに useEffect()内の関数が呼び出されます。
    */
@@ -155,7 +180,8 @@ const NftUploader = () => {
       {currentAccount === "" ? (
         renderNotConnectedContainer()
       ) : (
-        <p>If you choose image, you can mint your NFT</p>
+        <p>Wallet Connected</p>,
+        changeNetworkContainer()
       )}
       <div className="title">
         <h2>NFTアップローダー</h2>
