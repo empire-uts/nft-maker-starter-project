@@ -31,8 +31,30 @@ const NftUploader = () => {
       // 0x4 は　Rinkeby の ID です。
       const rinkebyChainId = "0x4";
       if (chainId !== rinkebyChainId) {
-        alert("You are not connected to the Rinkeby Test Network!");
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: rinkebyChainId }]
+          });
+          alert("Congrats! You are connected to the Rinkeby Test Network!");
+        } catch (err) {
+          // This error code indicates that the chain has not been added to MetaMask
+          if (err.code === 4902) {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainName: 'Rinkeby Testnet',
+                  chainId: rinkebyChainId,
+                  nativeCurrency: { name: 'ETH', decimals: 4, symbol: 'RinkebyETH' },
+                  rpcUrls: ['https://rinkeby.infura.io/v3/<ProjectID>']
+                }
+              ]
+            });
+          }
+        }
       }
+
     }
 
     const accounts = await ethereum.request({ method: "eth_accounts" });
